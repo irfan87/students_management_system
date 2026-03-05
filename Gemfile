@@ -4,8 +4,6 @@ source "https://rubygems.org"
 gem "rails", "~> 8.1.2"
 # The modern asset pipeline for Rails [https://github.com/rails/propshaft]
 gem "propshaft"
-# Use pg as the database for Active Record
-gem "pg", "~> 1.1"
 # Use the Puma web server [https://github.com/puma/puma]
 gem "puma", ">= 5.0"
 # Bundle and transpile JavaScript [https://github.com/rails/jsbundling-rails]
@@ -61,8 +59,18 @@ group :development do
   gem "web-console"
 end
 
+group :production do
+  # Use pg as the database for Active Record
+  gem "pg", "~> 1.1"
+end
+
 group :test do
   # Use system testing [https://guides.rubyonrails.org/testing.html#system-testing]
   gem "capybara"
   gem "selenium-webdriver"
+end
+
+group :development, :test do
+  # Use SQLite3 as the database for Active Record [https://guides.rubyonrails.org/configuring.html#database-configuration]
+  gem "sqlite3"
 end
