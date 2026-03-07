@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_07_193732) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_07_200048) do
   create_table "course_sessions", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "day_of_week"
