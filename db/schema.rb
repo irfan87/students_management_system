@@ -10,12 +10,12 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_07_185554) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_07_193732) do
   create_table "course_sessions", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "day_of_week"
-    t.string "subject_name"
-    t.string "teacher_name"
+    t.integer "subject_id"
+    t.integer "teacher_id"
     t.datetime "updated_at", null: false
   end
 
@@ -42,6 +42,24 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_07_185554) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "subjects", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "description"
+    t.string "level"
+    t.string "name"
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "teachers", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "email"
+    t.string "name"
+    t.string "phone"
+    t.datetime "updated_at", null: false
+  end
+
+  add_foreign_key "course_sessions", "subjects"
+  add_foreign_key "course_sessions", "teachers"
   add_foreign_key "enrollments", "course_sessions"
   add_foreign_key "enrollments", "students"
 end
