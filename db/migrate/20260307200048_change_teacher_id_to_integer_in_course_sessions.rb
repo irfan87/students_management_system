@@ -11,10 +11,11 @@ class ChangeTeacherIdToIntegerInCourseSessions < ActiveRecord::Migration[8.1]
       SQL
     else
       # PostgreSQL
-      execute <<-SQL
-        UPDATE course_sessions
-        SET teacher_id_temp = teacher_id::integer;
-      SQL
+      # execute <<-SQL
+      #   UPDATE course_sessions
+      #   SET teacher_id_temp = teacher_id::integer;
+      # SQL
+      change_column :course_sessions, :teacher_id, 'integer USING teacher_id::integer'
     end
 
     # 3. Remove old string column
