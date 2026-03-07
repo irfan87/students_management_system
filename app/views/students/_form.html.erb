@@ -22,6 +22,11 @@
   </div>
 
   <div>
+    <%= form.label :student_gender, style: "display: block" %>
+    <%= form.select :student_gender, Student.student_genders.keys.map { |g| [g.humanize, g] }, { prompt: "Select Gender" } %>
+  </div>
+
+  <div>
     <%= form.label :student_address, style: "display: block" %>
     <%= form.textarea :student_address %>
   </div>
