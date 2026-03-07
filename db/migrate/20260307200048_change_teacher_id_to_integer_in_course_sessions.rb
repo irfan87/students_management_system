@@ -1,44 +1,42 @@
 class ChangeTeacherIdToIntegerInCourseSessions < ActiveRecord::Migration[8.1]
   def up
-    # 1. Add a new integer column
-    add_column :course_sessions, :teacher_id_temp, :integer
-
-    # 2. Copy data from old string column to new integer column
     if ActiveRecord::Base.connection.adapter_name.downcase.include?("sqlite")
+      # SQLite flow: temp column
+      add_column :course_sessions, :teacher_id_temp, :integer
+
       execute <<-SQL
         UPDATE course_sessions
         SET teacher_id_temp = CAST(teacher_id AS INTEGER);
       SQL
+
+      remove_column :course_sessions, :teacher_id
+      rename_column :course_sessions, :teacher_id_temp, :teacher_id
     else
-      # PostgreSQL
-      # execute <<-SQL
-      #   UPDATE course_sessions
-      #   SET teacher_id_temp = teacher_id::integer;
-      # SQL
-      change_column :course_sessions, :teacher_id, 'integer USING teacher_id::integer'
+      # PostgreSQL flow: change_column using cast
+      change_column :course_sessions, :teacher_id, :integer, using: 'teacher_id::integer'
     end
 
-    # 3. Remove old string column
-    remove_column :course_sessions, :teacher_id
-
-    # 4. Rename new column
-    rename_column :course_sessions, :teacher_id_temp, :teacher_id
-
-    # 5. Add foreign key
+    # Add foreign key (works for both SQLite and Postgres)
     add_foreign_key :course_sessions, :teachers
   end
 
   def down
     remove_foreign_key :course_sessions, :teachers
 
-    add_column :course_sessions, :teacher_id_temp, :string
+    if ActiveRecord::Base.connection.adapter_name.downcase.include?("sqlite")
+      # Reverse SQLite flow
+      add_column :course_sessions, :teacher_id_temp, :string
 
-    execute <<-SQL
-      UPDATE course_sessions
-      SET teacher_id_temp = teacher_id;
-    SQL
+      execute <<-SQL
+        UPDATE course_sessions
+        SET teacher_id_temp = teacher_id;
+      SQL
 
-    remove_column :course_sessions, :teacher_id
-    rename_column :course_sessions, :teacher_id_temp, :teacher_id
+      remove_column :course_sessions, :teacher_id
+      rename_column :course_sessions, :teacher_id_temp, :teacher_id
+    else
+      # Reverse PostgreSQL flow
+      change_column :course_sessions, :teacher_id, :string, using: 'teacher_id::text'
+    end
   end
 end
